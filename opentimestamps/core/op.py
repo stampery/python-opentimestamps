@@ -11,6 +11,7 @@
 
 import binascii
 import hashlib
+import sha3
 
 import opentimestamps.core.serialize
 
@@ -289,12 +290,18 @@ class CryptOp(UnaryOp):
     DIGEST_LENGTH = None
 
     def _do_op_call(self, msg):
-        r = hashlib.new(self.HASHLIB_NAME, bytes(msg)).digest()
+        try:
+          r = getattr(hashlib, self.HASHLIB_NAME)(bytes(msg)).digest()
+        except AttributeError:
+          r = hashlib.new(self.HASHLIB_NAME, bytes(msg)).digest()
         assert len(r) == self.DIGEST_LENGTH
         return r
 
     def hash_fd(self, fd):
-        hasher = hashlib.new(self.HASHLIB_NAME)
+        try:
+          hasher = getattr(hashlib, self.HASHLIB_NAME)()
+        except AttributeError:
+          hasher = hashlib.new(self.HASHLIB_NAME)
         while True:
             chunk = fd.read(2**20) # 1MB chunks
             if chunk:
@@ -334,3 +341,24 @@ class OpSHA256(CryptOp):
     TAG_NAME = 'sha256'
     HASHLIB_NAME = "sha256"
     DIGEST_LENGTH = 32
+
+@CryptOp._register_op
+class OpSHA3_256(CryptOp):
+    TAG = b'\x0d'
+    TAG_NAME = 'sha3-256'
+    HASHLIB_NAME = "sha3_256"
+    DIGEST_LENGTH = 32
+
+@CryptOp._register_op
+class OpSHA3_384(CryptOp):
+    TAG = b'\x0e'
+    TAG_NAME = 'sha3-384'
+    HASHLIB_NAME = "sha3_384"
+    DIGEST_LENGTH = 48
+
+@CryptOp._register_op
+class OpSHA3_512(CryptOp):
+    TAG = b'\x0f'
+    TAG_NAME = 'sha3-512'
+    HASHLIB_NAME = "sha3_512"
+    DIGEST_LENGTH = 64

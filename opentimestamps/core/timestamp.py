@@ -225,7 +225,7 @@ class DetachedTimestampFile:
     """
 
     MIN_FILE_DIGEST_LENGTH = 20 # 160-bit hash
-    MAX_FILE_DIGEST_LENGTH = 32 # 256-bit hash
+    MAX_FILE_DIGEST_LENGTH = 64 # 512-bit hash
 
     MAJOR_VERSION = 1
 

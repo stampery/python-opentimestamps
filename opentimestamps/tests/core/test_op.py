@@ -88,6 +88,10 @@ class Test_Op(unittest.TestCase):
         """RIPEMD160 operation"""
         self.assertEqual(OpRIPEMD160()(b''), bytes.fromhex('9c1185a5c5e9fc54612808977ee8f548b2258d31'))
 
+    def test_sha3(self):
+        """SHA3 operation"""
+        self.assertEqual(OpSHA3_512()(b''), bytes.fromhex('a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26'))
+
     def test_equality(self):
         """Operation equality"""
         self.assertEqual(OpReverse(), OpReverse())
